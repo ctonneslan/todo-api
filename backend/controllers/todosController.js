@@ -1,6 +1,7 @@
 import * as todosService from "../services/todosService.js";
+import * as errors from "../utils/errors.js";
 
-export async function getAllTodos(req, res) {
+export async function getAllTodos(req, res, next) {
   const userId = req.user.id;
   const page = parseInt(req.query.page) || 1;
   const limit = Math.min(parseInt(req.query.limit) || 10, 100);
@@ -17,91 +18,86 @@ export async function getAllTodos(req, res) {
     );
     return res.status(200).json(result);
   } catch (err) {
-    const status = err.status || 500;
-    res.status(status).json(err);
+    next(err);
   }
 }
 
-export async function getTodo(req, res) {
+export async function getTodo(req, res, next) {
   const todoId = req.params.id;
   const userId = req.user.id;
 
-  if (isNaN(todoId)) {
-    return res.status(400).json({ error: "Invalid ID" });
-  }
-
   try {
+    if (isNaN(todoId)) {
+      throw new errors.ValidationError("Invalid ID");
+    }
+
     const result = await todosService.getTodo(todoId, userId);
     if (!result) {
-      return res.status(404).json({ error: "Todo not found" });
+      throw new errors.NotFoundError("Todo not found");
     }
     return res.status(200).json(result);
   } catch (err) {
-    const status = err.status || 500;
-    res.status(status).json(err);
+    next(err);
   }
 }
 
-export async function createTodo(req, res) {
+export async function createTodo(req, res, next) {
   const title = req.body.title;
   const completed = req.body.completed ?? false;
   const userId = req.user.id;
 
-  if (!title || title.trim() === "") {
-    return res.status(400).json({ error: "Title is required" });
-  }
-
   try {
+    if (!title || title.trim() === "") {
+      throw new errors.ValidationError("Title is required");
+    }
+
     const result = await todosService.createTodo({ title, completed }, userId);
     return res.status(201).json(result);
   } catch (err) {
-    const status = err.status || 500;
-    res.status(status).json(err);
+    next(err);
   }
 }
 
-export async function updateTodo(req, res) {
+export async function updateTodo(req, res, next) {
   const todoId = req.params.id;
   const title = req.body.title;
   const completed = req.body.completed;
   const userId = req.user.id;
 
-  if (isNaN(todoId)) {
-    return res.status(400).json({ error: "Invalid ID" });
-  }
-
   try {
+    if (isNaN(todoId)) {
+      throw new errors.ValidationError("Invalid ID");
+    }
+
     const result = await todosService.updateTodo(
       todoId,
       { title, completed },
       userId
     );
     if (!result) {
-      return res.status(404).json({ error: "Todo not found" });
+      throw new errors.NotFoundError("Todo not found");
     }
     return res.status(200).json(result);
   } catch (err) {
-    const status = err.status || 500;
-    res.status(status).json(err);
+    next(err);
   }
 }
 
-export async function deleteTodo(req, res) {
+export async function deleteTodo(req, res, next) {
   const todoId = req.params.id;
   const userId = req.user.id;
 
-  if (isNaN(todoId)) {
-    return res.status(400).json({ error: "Invalid ID" });
-  }
-
   try {
+    if (isNaN(todoId)) {
+      throw new errors.ValidationError("Invalid ID");
+    }
+
     const result = await todosService.deleteTodo(todoId, userId);
     if (!result) {
-      return res.status(404).json({ error: "Todo not found" });
+      throw new errors.NotFoundError("Todo not found");
     }
     return res.status(200).json(result);
   } catch (err) {
-    const status = err.status || 500;
-    res.status(status).json(err);
+    next(err);
   }
 }

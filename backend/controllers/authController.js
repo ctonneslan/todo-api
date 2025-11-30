@@ -1,49 +1,48 @@
 import * as authService from "../services/authService.js";
+import * as errors from "../utils/errors.js";
 
-export async function register(req, res) {
+export async function register(req, res, next) {
   const username = req.body.username;
   const password = req.body.password;
 
-  if (!username || username.trim() === "") {
-    return res.status(400).json({ error: "Username is required" });
-  }
-
-  if (!password || password.trim() === "") {
-    return res.status(400).json({ error: "Password is required" });
-  }
-
   try {
+    if (!username || username.trim() === "") {
+      throw new errors.ValidationError("Username is required");
+    }
+
+    if (!password || password.trim() === "") {
+      throw new errors.ValidationError("Password is required");
+    }
+
     const result = await authService.register(username, password);
     if (!result) {
-      return res.status(409).json({ error: "Username already exists" });
+      throw new errors.ConflictError("Username already exists");
     }
     res.status(201).json(result);
   } catch (err) {
-    const status = err.status || 500;
-    res.status(status).json(err);
+    next(err);
   }
 }
 
-export async function login(req, res) {
+export async function login(req, res, next) {
   const username = req.body.username;
   const password = req.body.password;
 
-  if (!username || username.trim() === "") {
-    return res.status(400).json({ error: "Username is required" });
-  }
-
-  if (!password || password.trim() === "") {
-    return res.status(400).json({ error: "Password is required" });
-  }
-
   try {
+    if (!username || username.trim() === "") {
+      throw new errors.ValidationError("Username is required");
+    }
+
+    if (!password || password.trim() === "") {
+      throw new errors.ValidationError("Password is required");
+    }
+
     const result = await authService.login(username, password);
     if (!result) {
-      return res.status(401).json({ error: "Invalid username or password" });
+      throw new errors.UnauthorizedError("Invalid username or password");
     }
     res.status(200).json(result);
   } catch (err) {
-    const status = err.status || 500;
-    res.status(status).json(err);
+    next(err);
   }
 }

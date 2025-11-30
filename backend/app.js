@@ -5,6 +5,7 @@ import morgan from "morgan";
 import authRoutes from "./routes/authRoutes.js";
 import todosRoutes from "./routes/todosRoutes.js";
 import pool from "./db/config.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 
 export function createApp() {
   const app = express();
@@ -37,6 +38,8 @@ export function createApp() {
   app.use((req, res) => {
     res.status(404).json({ error: "Endpoint not found" });
   });
+
+  app.use(errorHandler);
 
   return app;
 }
