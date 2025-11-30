@@ -2,8 +2,19 @@ import * as todosService from "../services/todosService.js";
 
 export async function getAllTodos(req, res) {
   const userId = req.user.id;
+  const page = parseInt(req.query.page) || 1;
+  const limit = Math.min(parseInt(req.query.limit) || 10, 100);
+  const completed = req.query.completed;
+  const search = req.query.search;
+
   try {
-    const result = await todosService.getAllTodos(userId);
+    const result = await todosService.getAllTodos(
+      userId,
+      page,
+      limit,
+      completed,
+      search
+    );
     return res.status(200).json(result);
   } catch (err) {
     const status = err.status || 500;

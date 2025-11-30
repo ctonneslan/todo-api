@@ -1,7 +1,13 @@
 import * as todosRepository from "../repositories/todosRepository.js";
 
-export async function getAllTodos(userId) {
-  const todos = await todosRepository.getAllTodos(userId);
+export async function getAllTodos(userId, page, limit, completed, search) {
+  const todos = await todosRepository.getAllTodos(
+    userId,
+    page,
+    limit,
+    completed,
+    search
+  );
   return todos;
 }
 

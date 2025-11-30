@@ -1,11 +1,43 @@
 import pool from "../db/config.js";
 
-export async function getAllTodos(userId) {
-  const result = await pool.query(
-    "SELECT * FROM todos WHERE user_id = $1 ORDER BY created_at DESC",
-    [userId]
+export async function getAllTodos(userId, page, limit, completed, search) {
+  const offset = (page - 1) * limit;
+
+  const conditions = ["user_id = $1"];
+  const params = [userId];
+  let paramIndex = 2;
+
+  if (completed !== undefined) {
+    conditions.push(`completed = $${paramIndex}`);
+    params.push(completed === "true");
+    paramIndex++;
+  }
+
+  if (search) {
+    conditions.push(`title ILIKE $${paramIndex}`);
+    params.push(`%${search}%`);
+    paramIndex++;
+  }
+
+  const whereClause = conditions.join(" AND ");
+
+  const countResult = await pool.query(
+    `SELECT COUNT(*) FROM todos WHERE ${whereClause}`,
+    params
   );
-  return result.rows;
+
+  const total = parseInt(countResult.rows[0].count);
+
+  const dataResult = await pool.query(
+    `SELECT * FROM todos WHERE ${whereClause} ORDER BY created_at DESC LIMIT $${paramIndex} OFFSET $${
+      paramIndex + 1
+    }`,
+    [...params, limit, offset]
+  );
+  return {
+    data: dataResult.rows,
+    pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+  };
 }
 
 export async function getTodo(todoId, userId) {
