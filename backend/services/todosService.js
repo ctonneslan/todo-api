@@ -19,18 +19,36 @@ export async function getTodo(todoId, userId) {
 export async function createTodo(data, userId) {
   const title = data.title;
   const completed = data.completed;
-  const todo = await todosRepository.createTodo(title, completed, userId);
+  const description = data.description;
+  const dueDate = data.dueDate;
+  const priority = data.priority;
+
+  const todo = await todosRepository.createTodo(
+    title,
+    completed,
+    userId,
+    description,
+    dueDate,
+    priority
+  );
   return todo;
 }
 
 export async function updateTodo(todoId, data, userId) {
   const title = data.title;
   const completed = data.completed;
+  const description = data.description;
+  const dueDate = data.dueDate;
+  const priority = data.priority;
+
   const todo = await todosRepository.updateTodo(
     todoId,
     title,
     completed,
-    userId
+    userId,
+    description,
+    dueDate,
+    priority
   );
   return todo;
 }

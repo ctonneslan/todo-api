@@ -48,18 +48,34 @@ export async function getTodo(todoId, userId) {
   return result.rows[0];
 }
 
-export async function createTodo(title, completed, userId) {
+export async function createTodo(
+  title,
+  completed,
+  userId,
+  description,
+  due_date,
+  priority
+) {
   const result = await pool.query(
-    "INSERT INTO todos (title, completed, user_id) VALUES ($1, $2, $3) RETURNING *",
-    [title, completed, userId]
+    "INSERT INTO todos (title, completed, user_id, description, due_date, priority) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+    [title, completed, userId, description, due_date, priority]
   );
   return result.rows[0];
 }
 
-export async function updateTodo(todoId, title, completed, userId) {
+export async function updateTodo(
+  todoId,
+  title,
+  completed,
+  userId,
+  description,
+  due_date,
+  priority
+) {
   const result = await pool.query(
-    "UPDATE todos SET title = $1, completed = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 AND user_id = $4 RETURNING *",
-    [title, completed, todoId, userId]
+    "UPDATE todos SET title = $1, completed = $2, description = $5, due_date = $6, priority = $7, updated_at = CURRENT_TIMESTAMP \
+     WHERE id = $3 AND user_id = $4 RETURNING *",
+    [title, completed, todoId, userId, description, due_date, priority]
   );
   return result.rows[0];
 }

@@ -45,13 +45,30 @@ export async function createTodo(req, res, next) {
   const title = req.body.title;
   const completed = req.body.completed ?? false;
   const userId = req.user.id;
+  const description = req.body.description;
+  const dueDate = req.body.dueDate;
+  const priority = req.body.priority;
 
   try {
     if (!title || title.trim() === "") {
       throw new errors.ValidationError("Title is required");
     }
 
-    const result = await todosService.createTodo({ title, completed }, userId);
+    if (dueDate && isNaN(Date.parse(dueDate))) {
+      throw new errors.ValidationError("Invalid due date format");
+    }
+
+    const validPriorities = ["low", "medium", "high"];
+    if (priority && !validPriorities.includes(priority)) {
+      throw new errors.ValidationError(
+        "Priority must be 'low', 'medium', or 'high'"
+      );
+    }
+
+    const result = await todosService.createTodo(
+      { title, completed, description, dueDate, priority },
+      userId
+    );
     return res.status(201).json(result);
   } catch (err) {
     next(err);
@@ -63,15 +80,29 @@ export async function updateTodo(req, res, next) {
   const title = req.body.title;
   const completed = req.body.completed;
   const userId = req.user.id;
+  const description = req.body.description;
+  const dueDate = req.body.dueDate;
+  const priority = req.body.priority;
 
   try {
     if (isNaN(todoId)) {
       throw new errors.ValidationError("Invalid ID");
     }
 
+    if (dueDate && isNaN(Date.parse(dueDate))) {
+      throw new errors.ValidationError("Invalid due date format");
+    }
+
+    const validPriorities = ["low", "medium", "high"];
+    if (priority && !validPriorities.includes(priority)) {
+      throw new errors.ValidationError(
+        "Priority must be 'low', 'medium', or 'high'"
+      );
+    }
+
     const result = await todosService.updateTodo(
       todoId,
-      { title, completed },
+      { title, completed, description, dueDate, priority },
       userId
     );
     if (!result) {

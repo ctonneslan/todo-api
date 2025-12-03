@@ -1,5 +1,5 @@
 export function errorHandler(err, req, res, next) {
-  console.err(err.stack);
+  console.error(err.stack);
 
   const status = err.status || 500;
 

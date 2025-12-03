@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import authRoutes from "./routes/authRoutes.js";
 import todosRoutes from "./routes/todosRoutes.js";
+import categoriesRoutes from "./routes/categoriesRoutes.js";
 import pool from "./db/config.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
@@ -33,6 +34,7 @@ export function createApp() {
   // Routes
   app.use("/api/auth", authRoutes);
   app.use("/api/todos", todosRoutes);
+  app.use("/api/categories", categoriesRoutes);
 
   // 404 handler
   app.use((req, res) => {
