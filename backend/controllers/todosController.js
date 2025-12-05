@@ -7,6 +7,7 @@ import * as errors from "../utils/errors.js";
  * @query {number} [limit=10] - Items per page (max 100)
  * @query {string} [completed] - Filter by completion status
  * @query {string} [search] - Search term for title
+ * @query {string} [categoryId] - Filter by category
  */
 export async function getAllTodos(req, res, next) {
   const userId = req.user.id;
@@ -14,6 +15,7 @@ export async function getAllTodos(req, res, next) {
   const limit = Math.min(parseInt(req.query.limit) || 10, 100);
   const completed = req.query.completed;
   const search = req.query.search;
+  const categoryId = req.query.categoryId;
 
   try {
     const result = await todosService.getAllTodos(
@@ -21,7 +23,8 @@ export async function getAllTodos(req, res, next) {
       page,
       limit,
       completed,
-      search
+      search,
+      categoryId
     );
     return res.status(200).json(result);
   } catch (err) {

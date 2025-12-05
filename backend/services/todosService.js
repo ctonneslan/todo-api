@@ -9,15 +9,24 @@ import * as errors from "../utils/errors.js";
  * @param {number} limit - Items per page
  * @param {string} [completed] - Filter by completion status
  * @param {string} [search] - Search term for title
+ * @param {string} [categoryId] - Filter by category
  * @returns {Promise<{data: object[], pagination: object}>} Paginated todos
  */
-export async function getAllTodos(userId, page, limit, completed, search) {
+export async function getAllTodos(
+  userId,
+  page,
+  limit,
+  completed,
+  search,
+  categoryId
+) {
   const todos = await todosRepository.getAllTodos(
     userId,
     page,
     limit,
     completed,
-    search
+    search,
+    categoryId
   );
   return todos;
 }

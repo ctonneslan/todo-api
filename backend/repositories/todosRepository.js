@@ -7,38 +7,56 @@ import pool from "../db/config.js";
  * @param {number} limit - Items per page
  * @param {string} [completed] - Filter by completion status ("true"/"false")
  * @param {string} [search] - Search term for title
+ * @param {string} [categoryId] - Filter by category
  * @returns {Promise<{data: object[], pagination: object}>} Paginated todos
  */
-export async function getAllTodos(userId, page, limit, completed, search) {
+export async function getAllTodos(
+  userId,
+  page,
+  limit,
+  completed,
+  search,
+  categoryId
+) {
   const offset = (page - 1) * limit;
 
-  const conditions = ["user_id = $1"];
+  const conditions = ["t.user_id = $1"];
   const params = [userId];
   let paramIndex = 2;
 
   if (completed !== undefined) {
-    conditions.push(`completed = $${paramIndex}`);
+    conditions.push(`t.completed = $${paramIndex}`);
     params.push(completed === "true");
     paramIndex++;
   }
 
   if (search) {
-    conditions.push(`title ILIKE $${paramIndex}`);
+    conditions.push(`t.title ILIKE $${paramIndex}`);
     params.push(`%${search}%`);
+    paramIndex++;
+  }
+
+  if (categoryId) {
+    conditions.push(`tc.category_id = $${paramIndex}`);
+    params.push(categoryId);
     paramIndex++;
   }
 
   const whereClause = conditions.join(" AND ");
 
+  const joinClause = categoryId
+    ? "INNER JOIN todo_categories tc ON t.id = tc.todo_id"
+    : "";
+
   const countResult = await pool.query(
-    `SELECT COUNT(*) FROM todos WHERE ${whereClause}`,
+    `SELECT COUNT(DISTINCT t.id) FROM todos t ${joinClause} WHERE ${whereClause}`,
     params
   );
 
   const total = parseInt(countResult.rows[0].count);
 
   const dataResult = await pool.query(
-    `SELECT * FROM todos WHERE ${whereClause} ORDER BY created_at DESC LIMIT $${paramIndex} OFFSET $${
+    `SELECT DISTINCT t.* FROM todos t ${joinClause} WHERE ${whereClause} ORDER BY created_at DESC LIMIT $${paramIndex} OFFSET $${
       paramIndex + 1
     }`,
     [...params, limit, offset]
