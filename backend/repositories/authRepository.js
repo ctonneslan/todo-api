@@ -1,6 +1,12 @@
 import pool from "../db/config.js";
 import * as authUtils from "../utils/authUtils.js";
 
+/**
+ * Create a new user.
+ * @param {string} username - Username
+ * @param {string} password - Plain text password (will be hashed)
+ * @returns {Promise<object|null>} Created user (without password) or null if username exists
+ */
 export async function register(username, password) {
   const hashedPassword = await authUtils.hashPassword(password);
 
@@ -18,6 +24,12 @@ export async function register(username, password) {
   }
 }
 
+/**
+ * Validate credentials and return JWT token.
+ * @param {string} username - Username
+ * @param {string} password - Plain text password
+ * @returns {Promise<{token: string}|null>} JWT token object or null if invalid credentials
+ */
 export async function login(username, password) {
   const result = await pool.query("SELECT * FROM users WHERE username = $1", [
     username,

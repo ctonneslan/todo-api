@@ -1,5 +1,14 @@
 import pool from "../db/config.js";
 
+/**
+ * Get paginated todos with optional filters.
+ * @param {number} userId - Owner's user ID
+ * @param {number} page - Page number
+ * @param {number} limit - Items per page
+ * @param {string} [completed] - Filter by completion status ("true"/"false")
+ * @param {string} [search] - Search term for title
+ * @returns {Promise<{data: object[], pagination: object}>} Paginated todos
+ */
 export async function getAllTodos(userId, page, limit, completed, search) {
   const offset = (page - 1) * limit;
 
@@ -40,6 +49,12 @@ export async function getAllTodos(userId, page, limit, completed, search) {
   };
 }
 
+/**
+ * Get a single todo by ID.
+ * @param {number} todoId - Todo ID
+ * @param {number} userId - Owner's user ID
+ * @returns {Promise<object|undefined>} Todo or undefined if not found
+ */
 export async function getTodo(todoId, userId) {
   const result = await pool.query(
     "SELECT * FROM todos WHERE id = $1 AND user_id = $2",
@@ -48,6 +63,16 @@ export async function getTodo(todoId, userId) {
   return result.rows[0];
 }
 
+/**
+ * Create a new todo.
+ * @param {string} title - Todo title
+ * @param {boolean} completed - Completion status
+ * @param {number} userId - Owner's user ID
+ * @param {string} [description] - Todo description
+ * @param {string} [due_date] - Due date (ISO string)
+ * @param {string} [priority] - Priority level (low/medium/high)
+ * @returns {Promise<object>} Created todo
+ */
 export async function createTodo(
   title,
   completed,
@@ -63,6 +88,17 @@ export async function createTodo(
   return result.rows[0];
 }
 
+/**
+ * Update a todo.
+ * @param {number} todoId - Todo ID
+ * @param {string} title - Todo title
+ * @param {boolean} completed - Completion status
+ * @param {number} userId - Owner's user ID
+ * @param {string} [description] - Todo description
+ * @param {string} [due_date] - Due date (ISO string)
+ * @param {string} [priority] - Priority level (low/medium/high)
+ * @returns {Promise<object|undefined>} Updated todo or undefined if not found
+ */
 export async function updateTodo(
   todoId,
   title,
@@ -80,10 +116,62 @@ export async function updateTodo(
   return result.rows[0];
 }
 
+/**
+ * Delete a todo.
+ * @param {number} todoId - Todo ID
+ * @param {number} userId - Owner's user ID
+ * @returns {Promise<object|undefined>} Deleted todo or undefined if not found
+ */
 export async function deleteTodo(todoId, userId) {
   const result = await pool.query(
     "DELETE FROM todos WHERE id = $1 AND user_id = $2 RETURNING *",
     [todoId, userId]
   );
   return result.rows[0];
+}
+
+/**
+ * Link a category to a todo.
+ * @param {number} todoId - Todo ID
+ * @param {number} categoryId - Category ID
+ * @returns {Promise<object|null>} Junction record or null if already linked
+ */
+export async function addTodoCategory(todoId, categoryId) {
+  try {
+    const result = await pool.query(
+      "INSERT INTO todo_categories (todo_id, category_id) VALUES ($1, $2) RETURNING *",
+      [todoId, categoryId]
+    );
+    return result.rows[0];
+  } catch (err) {
+    if (err.code === "23505") return null;
+    throw err;
+  }
+}
+
+/**
+ * Unlink a category from a todo.
+ * @param {number} todoId - Todo ID
+ * @param {number} categoryId - Category ID
+ * @returns {Promise<object|undefined>} Deleted junction record or undefined if not linked
+ */
+export async function deleteTodoCategory(todoId, categoryId) {
+  const result = await pool.query(
+    "DELETE FROM todo_categories WHERE todo_id = $1 AND category_id = $2 RETURNING *",
+    [todoId, categoryId]
+  );
+  return result.rows[0];
+}
+
+/**
+ * Get all categories linked to a todo.
+ * @param {number} todoId - Todo ID
+ * @returns {Promise<object[]>} Array of categories
+ */
+export async function getTodoCategories(todoId) {
+  const result = await pool.query(
+    "SELECT c.* FROM categories c JOIN todo_categories tc ON c.id = tc.category_id WHERE tc.todo_id = $1",
+    [todoId]
+  );
+  return result.rows;
 }

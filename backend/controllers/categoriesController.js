@@ -1,6 +1,10 @@
 import * as errors from "../utils/errors.js";
 import * as categoriesService from "../services/categoriesService.js";
 
+/**
+ * POST /categories - Create a new category.
+ * @body {string} name - Category name (required)
+ */
 export async function createCategory(req, res, next) {
   const userId = req.user.id;
   const name = req.body.name;
@@ -11,15 +15,16 @@ export async function createCategory(req, res, next) {
     }
 
     const result = await categoriesService.createCategory(name, userId);
-    if (!result) {
-      throw new errors.ConflictError("Category name already exists");
-    }
     res.status(201).json(result);
   } catch (err) {
     next(err);
   }
 }
 
+/**
+ * DELETE /categories/:id - Delete a category.
+ * @param {string} id - Category ID
+ */
 export async function deleteCategory(req, res, next) {
   const userId = req.user.id;
   const categoryId = req.params.id;
@@ -30,17 +35,17 @@ export async function deleteCategory(req, res, next) {
     }
 
     const result = await categoriesService.deleteCategory(categoryId, userId);
-
-    if (!result) {
-      throw new errors.NotFoundError("Category not found");
-    }
-
     res.status(200).json(result);
   } catch (err) {
     next(err);
   }
 }
 
+/**
+ * PUT /categories/:id - Update a category.
+ * @param {string} id - Category ID
+ * @body {string} name - New category name (required)
+ */
 export async function updateCategory(req, res, next) {
   const userId = req.user.id;
   const categoryId = req.params.id;
@@ -55,28 +60,20 @@ export async function updateCategory(req, res, next) {
       throw new errors.ValidationError("Category name is required");
     }
 
-    const existing = await categoriesService.getCategory(categoryId, userId);
-
-    if (!existing) {
-      throw new errors.NotFoundError("Category not found");
-    }
-
     const result = await categoriesService.updateCategory(
       categoryId,
       userId,
       name
     );
-
-    if (!result) {
-      throw new errors.ConflictError("Category name already exists");
-    }
-
     res.status(200).json(result);
   } catch (err) {
     next(err);
   }
 }
 
+/**
+ * GET /categories - Get all categories for the authenticated user.
+ */
 export async function getAllCategories(req, res, next) {
   const userId = req.user.id;
   try {
@@ -87,6 +84,10 @@ export async function getAllCategories(req, res, next) {
   }
 }
 
+/**
+ * GET /categories/:id - Get a single category.
+ * @param {string} id - Category ID
+ */
 export async function getCategory(req, res, next) {
   const userId = req.user.id;
   const categoryId = req.params.id;
@@ -97,11 +98,6 @@ export async function getCategory(req, res, next) {
     }
 
     const result = await categoriesService.getCategory(categoryId, userId);
-
-    if (!result) {
-      throw new errors.NotFoundError("Category not found");
-    }
-
     res.status(200).json(result);
   } catch (err) {
     next(err);

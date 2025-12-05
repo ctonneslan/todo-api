@@ -1,3 +1,8 @@
+/**
+ * Express error handling middleware.
+ * Logs error stack and returns appropriate status/message.
+ * Hides internal error details for 500 errors.
+ */
 export function errorHandler(err, req, res, next) {
   console.error(err.stack);
 

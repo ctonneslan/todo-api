@@ -1,6 +1,13 @@
 import * as todosService from "../services/todosService.js";
 import * as errors from "../utils/errors.js";
 
+/**
+ * GET /todos - Get paginated todos with optional filters.
+ * @query {number} [page=1] - Page number
+ * @query {number} [limit=10] - Items per page (max 100)
+ * @query {string} [completed] - Filter by completion status
+ * @query {string} [search] - Search term for title
+ */
 export async function getAllTodos(req, res, next) {
   const userId = req.user.id;
   const page = parseInt(req.query.page) || 1;
@@ -22,6 +29,10 @@ export async function getAllTodos(req, res, next) {
   }
 }
 
+/**
+ * GET /todos/:id - Get a single todo.
+ * @param {string} id - Todo ID
+ */
 export async function getTodo(req, res, next) {
   const todoId = req.params.id;
   const userId = req.user.id;
@@ -32,15 +43,20 @@ export async function getTodo(req, res, next) {
     }
 
     const result = await todosService.getTodo(todoId, userId);
-    if (!result) {
-      throw new errors.NotFoundError("Todo not found");
-    }
     return res.status(200).json(result);
   } catch (err) {
     next(err);
   }
 }
 
+/**
+ * POST /todos - Create a new todo.
+ * @body {string} title - Todo title (required)
+ * @body {boolean} [completed=false] - Completion status
+ * @body {string} [description] - Todo description
+ * @body {string} [dueDate] - Due date (ISO string)
+ * @body {string} [priority] - Priority (low/medium/high)
+ */
 export async function createTodo(req, res, next) {
   const title = req.body.title;
   const completed = req.body.completed ?? false;
@@ -75,6 +91,15 @@ export async function createTodo(req, res, next) {
   }
 }
 
+/**
+ * PUT /todos/:id - Update a todo.
+ * @param {string} id - Todo ID
+ * @body {string} [title] - Todo title
+ * @body {boolean} [completed] - Completion status
+ * @body {string} [description] - Todo description
+ * @body {string} [dueDate] - Due date (ISO string)
+ * @body {string} [priority] - Priority (low/medium/high)
+ */
 export async function updateTodo(req, res, next) {
   const todoId = req.params.id;
   const title = req.body.title;
@@ -105,15 +130,16 @@ export async function updateTodo(req, res, next) {
       { title, completed, description, dueDate, priority },
       userId
     );
-    if (!result) {
-      throw new errors.NotFoundError("Todo not found");
-    }
     return res.status(200).json(result);
   } catch (err) {
     next(err);
   }
 }
 
+/**
+ * DELETE /todos/:id - Delete a todo.
+ * @param {string} id - Todo ID
+ */
 export async function deleteTodo(req, res, next) {
   const todoId = req.params.id;
   const userId = req.user.id;
@@ -124,9 +150,86 @@ export async function deleteTodo(req, res, next) {
     }
 
     const result = await todosService.deleteTodo(todoId, userId);
-    if (!result) {
-      throw new errors.NotFoundError("Todo not found");
+    return res.status(200).json(result);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /todos/:id/categories - Link a category to a todo.
+ * @param {string} id - Todo ID
+ * @body {number} categoryId - Category ID to link
+ */
+export async function addTodoCategory(req, res, next) {
+  const todoId = req.params.id;
+  const userId = req.user.id;
+  const categoryId = req.body.categoryId;
+
+  try {
+    if (isNaN(todoId)) {
+      throw new errors.ValidationError("Invalid todo ID");
     }
+
+    if (isNaN(categoryId)) {
+      throw new errors.ValidationError("Invalid category ID");
+    }
+
+    const result = await todosService.addTodoCategory(
+      todoId,
+      categoryId,
+      userId
+    );
+    return res.status(201).json(result);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * DELETE /todos/:id/categories/:categoryId - Unlink a category from a todo.
+ * @param {string} id - Todo ID
+ * @param {string} categoryId - Category ID to unlink
+ */
+export async function deleteTodoCategory(req, res, next) {
+  const todoId = req.params.id;
+  const categoryId = req.params.categoryId;
+  const userId = req.user.id;
+
+  try {
+    if (isNaN(todoId)) {
+      throw new errors.ValidationError("Invalid todo ID");
+    }
+
+    if (isNaN(categoryId)) {
+      throw new errors.ValidationError("Invalid category ID");
+    }
+
+    const result = await todosService.deleteTodoCategory(
+      todoId,
+      categoryId,
+      userId
+    );
+    return res.status(200).json(result);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * GET /todos/:id/categories - Get all categories for a todo.
+ * @param {string} id - Todo ID
+ */
+export async function getTodoCategories(req, res, next) {
+  const todoId = req.params.id;
+  const userId = req.user.id;
+
+  try {
+    if (isNaN(todoId)) {
+      throw new errors.ValidationError("Invalid todo ID");
+    }
+
+    const result = await todosService.getTodoCategories(todoId, userId);
     return res.status(200).json(result);
   } catch (err) {
     next(err);

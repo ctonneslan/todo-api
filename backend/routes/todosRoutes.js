@@ -11,5 +11,11 @@ router.get("/:id", todosController.getTodo);
 router.post("/", todosController.createTodo);
 router.put("/:id", todosController.updateTodo);
 router.delete("/:id", todosController.deleteTodo);
+router.post("/:id/categories", todosController.addTodoCategory);
+router.delete(
+  "/:id/categories/:categoryId",
+  todosController.deleteTodoCategory
+);
+router.get("/:id/categories", todosController.getTodoCategories);
 
 export default router;
