@@ -1,0 +1,227 @@
+.container {
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.logoutBtn {
+  background-color: transparent;
+  color: var(--text-secondary);
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+}
+
+.logoutBtn:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.error {
+  background-color: rgba(229, 75, 75, 0.1);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.addForm {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.addInput {
+  flex: 1;
+  padding: 14px 16px;
+}
+
+.addBtn {
+  background-color: var(--accent);
+  color: white;
+  padding: 14px 24px;
+}
+
+.addBtn:hover {
+  background-color: var(--accent-hover);
+}
+
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.filterLabel {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.filterSelect {
+  min-width: 160px;
+  padding: 10px 14px;
+  background-color: var(--bg-tertiary);
+}
+
+.categoryList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.categoryTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.categoryDeleteBtn {
+  background: none;
+  color: var(--text-secondary);
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.categoryDeleteBtn:hover {
+  background-color: var(--danger);
+  color: white;
+}
+
+.todoList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.todoItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  transition: border-color 0.2s ease;
+}
+
+.todoItem:hover {
+  border-color: var(--border-light);
+}
+
+.checkbox {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 2px solid var(--border-light);
+  background-color: transparent;
+  cursor: pointer;
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.checkbox:checked {
+  background-color: var(--success);
+  border-color: var(--success);
+}
+
+.checkbox:checked::after {
+  content: "✓";
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.todoText {
+  flex: 1;
+  font-size: 15px;
+}
+
+.todoTextCompleted {
+  color: var(--text-secondary);
+  text-decoration: line-through;
+}
+
+.todoActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.todoSelect {
+  padding: 8px 12px;
+  font-size: 13px;
+  background-color: var(--bg-tertiary);
+  min-width: 140px;
+}
+
+.deleteBtn {
+  background-color: transparent;
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.deleteBtn:hover {
+  background-color: var(--danger);
+  color: white;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--text-secondary);
+}
+
+.emptyState p {
+  font-size: 15px;
+}
