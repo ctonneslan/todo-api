@@ -7,18 +7,36 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  const validate = () => {
+    if (!username.trim()) {
+      setError("Username is required");
+      return false;
+    }
+    if (!password) {
+      setError("Password is required");
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
+    if (!validate()) return;
+
+    setLoading(true);
     try {
       await login(username, password);
       navigate("/");
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -57,8 +75,8 @@ export default function Login() {
               placeholder="Enter your password"
             />
           </div>
-          <button type="submit" className={styles.button}>
-            Sign in
+          <button type="submit" className={styles.button} disabled={loading}>
+            {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
 

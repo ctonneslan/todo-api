@@ -7,18 +7,48 @@ export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  const validate = () => {
+    if (!username.trim()) {
+      setError("Username is required");
+      return false;
+    }
+    if (username.length < 3) {
+      setError("Username must be at least 3 characters");
+      return false;
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      setError("Username can only contain letters, numbers, and underscores");
+      return false;
+    }
+    if (!password) {
+      setError("Password is required");
+      return false;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
+    if (!validate()) return;
+
+    setLoading(true);
     try {
       await register(username, password);
       navigate("/");
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -57,8 +87,8 @@ export default function Register() {
               placeholder="Create a password"
             />
           </div>
-          <button type="submit" className={styles.button}>
-            Sign up
+          <button type="submit" className={styles.button} disabled={loading}>
+            {loading ? "Creating account..." : "Sign up"}
           </button>
         </form>
 

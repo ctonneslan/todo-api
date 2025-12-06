@@ -6,6 +6,7 @@
 .content {
   max-width: 800px;
   margin: 0 auto;
+  position: relative;
 }
 
 .header {
@@ -43,6 +44,18 @@
   border-radius: 8px;
   font-size: 14px;
   margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.errorClose {
+  background: none;
+  color: var(--danger);
+  padding: 0;
+  font-size: 20px;
+  cursor: pointer;
+  border: none;
 }
 
 .section {
@@ -75,8 +88,13 @@
   padding: 14px 24px;
 }
 
-.addBtn:hover {
+.addBtn:hover:not(:disabled) {
   background-color: var(--accent-hover);
+}
+
+.addBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .filterBar {
@@ -84,17 +102,53 @@
   align-items: center;
   gap: 12px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .filterLabel {
   font-size: 14px;
   color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 150px;
+  padding: 10px 14px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.searchInput::placeholder {
+  color: var(--text-secondary);
 }
 
 .filterSelect {
-  min-width: 160px;
+  min-width: 140px;
   padding: 10px 14px;
   background-color: var(--bg-tertiary);
+}
+
+.clearFiltersBtn {
+  background-color: transparent;
+  color: var(--text-secondary);
+  padding: 10px 14px;
+  font-size: 13px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.clearFiltersBtn:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
 }
 
 .categoryList {
@@ -141,7 +195,7 @@
 
 .todoItem {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border);
@@ -167,6 +221,7 @@
   justify-content: center;
   transition: all 0.2s ease;
   flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .checkbox:checked {
@@ -181,9 +236,17 @@
   font-weight: 600;
 }
 
-.todoText {
+.todoContent {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.todoText {
   font-size: 15px;
+  word-break: break-word;
 }
 
 .todoTextCompleted {
@@ -191,10 +254,17 @@
   text-decoration: line-through;
 }
 
+.todoDescription {
+  font-size: 13px;
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
 .todoActions {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .todoSelect {
@@ -202,6 +272,19 @@
   font-size: 13px;
   background-color: var(--bg-tertiary);
   min-width: 140px;
+}
+
+.editBtn {
+  background-color: transparent;
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  font-size: 13px;
+  border: 1px solid var(--border);
+}
+
+.editBtn:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
 }
 
 .deleteBtn {
@@ -224,4 +307,310 @@
 
 .emptyState p {
   font-size: 15px;
+}
+
+/* Loading */
+.loader {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  padding: 14px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  z-index: 1000;
+  animation: slideIn 0.3s ease;
+}
+
+.toast.success {
+  background-color: var(--success);
+  color: white;
+}
+
+.toast.error {
+  background-color: var(--danger);
+  color: white;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.pageBtn {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  padding: 10px 16px;
+  font-size: 14px;
+  border: 1px solid var(--border);
+}
+
+.pageBtn:hover:not(:disabled) {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-light);
+}
+
+.pageBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalTitle {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modalField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.modalLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.modalInput {
+  padding: 12px 14px;
+  font-size: 15px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+}
+
+.modalInput:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.modalTextarea {
+  padding: 12px 14px;
+  font-size: 15px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  resize: vertical;
+  font-family: inherit;
+}
+
+.modalTextarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.modalRow {
+  display: flex;
+  gap: 16px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.modalCancelBtn {
+  background-color: transparent;
+  color: var(--text-secondary);
+  padding: 12px 20px;
+  font-size: 14px;
+  border: 1px solid var(--border);
+}
+
+.modalCancelBtn:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.modalSaveBtn {
+  background-color: var(--accent);
+  color: white;
+  padding: 12px 20px;
+  font-size: 14px;
+}
+
+.modalSaveBtn:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+.modalSaveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .container {
+    padding: 20px 16px;
+  }
+
+  .header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .logoutBtn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .addForm {
+    flex-direction: column;
+  }
+
+  .addBtn {
+    width: 100%;
+  }
+
+  .filterBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filterLabel {
+    display: none;
+  }
+
+  .searchInput {
+    width: 100%;
+  }
+
+  .filterSelect {
+    width: 100%;
+  }
+
+  .clearFiltersBtn {
+    width: 100%;
+  }
+
+  .todoItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .checkbox {
+    margin-top: 0;
+  }
+
+  .todoContent {
+    width: 100%;
+  }
+
+  .todoActions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .todoSelect {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .editBtn,
+  .deleteBtn {
+    flex: 1;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .pageBtn {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .modal {
+    padding: 24px 20px;
+  }
+
+  .modalTitle {
+    font-size: 20px;
+  }
+
+  .modalRow {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .toast {
+    left: 16px;
+    right: 16px;
+    top: 16px;
+  }
 }
